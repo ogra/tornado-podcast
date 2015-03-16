@@ -142,7 +142,7 @@ class HomeHandler(SessionMixin, BaseHandler):
         self.render('home.html', urls=urls, data=dumps(self.session, indent=2))
 
 
-class BlogIndexHandler(SessionMixin, BaseHandler):
+class PodcastIndexHandler(SessionMixin, BaseHandler):
     def get(self):
         entries = self.application.blog.get_index()
         self.render('blog_index.html', entries=entries, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, podcast_title=__PODCAST_TITLE__)
@@ -380,7 +380,7 @@ if __name__ == "__main__":
         (r"/logout", UserLogoutHandler),
         (r"/login", UserLoginHandler),
         (r"/register", UserRegisterHandler),
-        (r"/blog", BlogIndexHandler),
+        (r"/podcast", PodcastIndexHandler),
         (r"/new", NewEntryHandler),
         (r"/delete", DeleteEntryHandler),
         (r"/deleteall", DeleteAllEntriesHandler),
