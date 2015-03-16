@@ -37,7 +37,7 @@
     <a href="/entry/{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Permalink</a>
     </span>
     
-    {% if user %}
+    {% if user and session %}
     <span>
     <a href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Edit</a>
     </span>
@@ -52,16 +52,18 @@
   <hr />
   {% end %}
   
-  {% if user %}
+  {% if user and session %}
       <button class="btn btn-default" onClick="location.href='/deleteall'">Delete All Entries</button>
   {% end %}
 {% end %}
   
 {% block footer %}
-  <div>
-  <a href="/new">Create New Entry</a>
-  </div>
-  <div>
-  <a href="/uploadform">Upload Files</a>
-  </div>
+  {% if user and session %}
+    <div>
+    <a href="/new">Create New Entry</a>
+    </div>
+    <div>
+    <a href="/uploadform">Upload Files</a>
+    </div>
+  {% end %}
 {% end %}

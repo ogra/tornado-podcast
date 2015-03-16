@@ -41,7 +41,7 @@ def convert_to_jst(datetime_obj):
 class Application(tornado.web.Application):
     def __init__(self, handlers, **settings):
         tornado.web.Application.__init__(self, handlers, **settings)
-        self.sessions = MongoSessions("mutiny", "sessions", timeout=1)
+        self.sessions = MongoSessions("mutiny", "sessions", timeout=30)
         self.auth = MongoAuthentication("mutiny", "authentication")
         if self.auth._coll.count() == 0:
             self.auth.register("admin", "admin", ['admin'])
@@ -145,7 +145,8 @@ class BlogIndexHandler(SessionMixin, BaseHandler):
     def get(self):
         entries = self.application.blog.get_index()
         user = self.current_user
-        self.render('blog_index.html', entries=entries, user=user, convert_to_jst=convert_to_jst)
+        session = self.session
+        self.render('blog_index.html', entries=entries, user=user, session=session, convert_to_jst=convert_to_jst)
 
 
 class NewEntryHandler(SessionMixin, BaseHandler):
