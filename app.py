@@ -145,7 +145,7 @@ class HomeHandler(SessionMixin, BaseHandler):
 class PodcastIndexHandler(SessionMixin, BaseHandler):
     def get(self):
         entries = self.application.blog.get_index()
-        self.render('blog_index.html', entries=entries, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, podcast_title=__PODCAST_TITLE__)
+        self.render('podcast_index.html', entries=entries, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, podcast_title=__PODCAST_TITLE__)
 
 
 class NewEntryHandler(SessionMixin, BaseHandler):
