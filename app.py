@@ -8,6 +8,7 @@ import os.path
 import pytz
 import imghdr
 from PIL import Image
+import markdown
 
 from auth import MongoAuthentication
 from bson.json_util import dumps
@@ -241,7 +242,7 @@ class ShowEntryHandler(SessionMixin, BaseHandler):
     def get(self, entry_id):
         entry = self.application.blog.get_entry(entry_id)
         if entry:
-            self.render('entry.html', entry=entry, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst)
+            self.render('entry.html', entry=entry, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, markdown=markdown.Markdown())
         else:
             self.render('404.html')
 

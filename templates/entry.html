@@ -23,7 +23,7 @@
     
     {% if 'body' in entry %}
       <div class="entry_body">
-      {{ entry['body'] }}
+      {% raw markdown.convert(entry['body']) %}
       </div>
     {% end %}
     
