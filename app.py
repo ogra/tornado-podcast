@@ -25,7 +25,7 @@ __THUMBNAILS__ = "thumbnails/"
 __THUMBNAIL_MAX_PIXEL__ = 120
 
 __PODCAST_TITLE__ = "Ogura's Podcast"
-__PODCAST_LINK__ = 'http://localhost:8888/blog'
+__PODCAST_LINK__ = 'http://localhost:8888/podcast'
 __PODCAST_DESCRIPTION__ = "Toshiyuki Ogura's podcast"
 __PODCAST_ITUNES_CATEGORY__ = ('Technology', 'Podcasting')
 __PODCAST_ITUNES_AUTHOR__ = 'Toshiyuki Ogura'
@@ -168,7 +168,7 @@ class NewEntryHandler(SessionMixin, BaseHandler):
             image_filename = self.get_argument("image", None)
             audio_filename = self.get_argument("audio", None)
             self.application.blog.create_entry(title, body, image_filename, audio_filename)
-            self.redirect('/blog')
+            self.redirect('/podcast')
 
 
 class DeleteEntryHandler(SessionMixin, BaseHandler):
@@ -179,7 +179,7 @@ class DeleteEntryHandler(SessionMixin, BaseHandler):
         else:
             entry_id = self.get_argument("entry_id", None)
             self.application.blog.delete_entry(entry_id)
-            self.redirect('/blog')
+            self.redirect('/podcast')
 
 
 class DeleteAllEntriesHandler(SessionMixin, BaseHandler):
@@ -195,14 +195,14 @@ class DeleteAllEntriesHandler(SessionMixin, BaseHandler):
             param = self.get_argument("deleteall", None)
             if param == 'true':
                 self.application.blog.delete_all_entries()
-                self.redirect('/blog')
+                self.redirect('/podcast')
 
 
 class UpdateEntryHandler(SessionMixin, BaseHandler):
     @tornado.web.authenticated
     def get(self):
         if self.session is None:
-            self.redirect('/login?next=%2Fblog')
+            self.redirect('/login?next=%2Fpodcast')
         else:
             entry_id = self.get_argument("entry_id", None)
             entry = self.application.blog.get_entry(entry_id)
@@ -221,7 +221,7 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
     @tornado.web.authenticated
     def post(self):
         if self.session is None:
-            self.redirect('/login?next=%2Fblog')
+            self.redirect('/login?next=%2Fpodcast')
         else:
             entry_id = self.get_argument("entry_id", None)
             title = self.get_argument("title", None)
