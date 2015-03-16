@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Upload files
+{% end %}
+
+{% block header %}
+  <h1>Upload files</h1>
+{% end %}
+
+{% block body %}  
+    <form enctype="multipart/form-data" action="/upload" method="post">
+      {% raw xsrf_form_html() %}
+      <fieldset>
+        <div class="form-group">
+          <legend>Select Image File</legend>
+          <input class='form-control' type="file" name="filearg1" accept="image/*">
+        </div>
+        <div class="form-group">
+          <legend>Select Audio File</legend>
+          <input class='form-control' type="file" name="filearg2" accept="audio/*">
+        </div>
+      </fieldset>
+      <div class="form-group">
+        <button class='btn btn-primary' type='submit'>Upload</button>
+      </div>
+    </form>
+{% end %}

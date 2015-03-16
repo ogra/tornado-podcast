@@ -1,0 +1,51 @@
+{% extends "base_modal.html" %}
+
+{% block title %}
+  Update Entry
+{% end %}
+
+{% block header %}
+  <h1>Update Entry</h1>
+{% end %}
+
+{% block body %}
+  <form method='post'>
+    {% raw xsrf_form_html() %}
+    <fieldset>
+      <legend>Update Entry</legend>
+      <div class="form-group">
+        <label>Title</label>
+        <input class='form-control' name='title' placeholder='Title' type='text' value='{% if "title" in entry %}{{ entry["title"] }}{% end %}'>
+      </div>
+      <div class="form-group">
+        <label>Body</label>
+        <textarea class='form-control' name='body' placeholder='Body'>{% if 'body' in entry %}{{ entry['body'] }}{% end %}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Image</label>
+        <input class='form-control' id='image' name='image' placeholder='Image' type='text' value='{% if "image" in entry %}{{ entry["image"] }}{% end %}'>
+      </div>
+      <div class="form-group">
+        <label>Audio</label>
+        <input class='form-control' id='audio' name='audio' placeholder='Audio' type='text' value='{% if "audio" in entry %}{{ entry["audio"] }}{% end %}'>
+      </div>
+      <input type='hidden' name='entry_id' value='{% if "entry_id" in entry %}{{ entry["entry_id"] }}{% end %}'>
+      <div class="form-group">
+        <button type='submit' class='btn btn-primary'>Submit</button>
+      </div>
+    </fieldset>
+  </form>
+  <br />
+  <button class="btn btn-default" data-toggle="modal" data-target="#selectImageModal">
+    Select Image
+  </button>
+  <button class="btn btn-default" data-toggle="modal" data-target="#selectAudioModal">
+    Select Audio
+  </button>
+{% end %}
+
+{% block footer %}
+  <div>
+    <a href="/blog">Blog Home</a>
+  </div>
+{% end %}

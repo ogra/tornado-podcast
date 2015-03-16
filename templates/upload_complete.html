@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Upload Complete
+{% end %}
+
+{% block header %}
+  <h1>Upload Complete</h1>
+{% end %}
+
+{% block body %}  
+
+<script src={{ static_url("select.js") }}></script>
+
+<!-- Image Modal -->
+<div class="modal fade" id="selectImageModal" tabindex="-1" role="dialog" 
+   aria-labelledby="selectImageModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="selectImageModalLabel">
+               Select Image
+            </h4>
+         </div>
+        <form>
+         <div class="modal-body">
+          {% for image in images %}
+            <input type="radio" name="image" value="{{ image }}" onClick="selectImage(this.value);">
+            {{ image }}
+            <img src="{{ thumbnailpath }}{{ image }}" />
+            <br />
+          {% end %}
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" onClick="setImage();">
+              Submit changes
+            </button>
+         </div>
+        </form>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+
+<!-- Audio Modal -->
+<div class="modal fade" id="selectAudioModal" tabindex="-1" role="dialog" 
+   aria-labelledby="selectAudioModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="selectAudioModalLabel">
+               Select Audio
+            </h4>
+         </div>
+        <form>
+         <div class="modal-body">
+          {% for audio in audios %}
+            <input type="radio" name="audio" value="{{ audio }}" onClick="selectAudio(this.value);">
+            {{ audio }}
+            <audio src="{{ uploadpath}}{{ audio }}" controls></audio>
+            <br />
+          {% end %}
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" onClick="setAudio();">
+              Submit changes
+            </button>
+         </div>
+        </form>
+      </div><!-- /.modal-content -->
+    </div>
+</div><!-- /.modal -->
+
+
+
+    <div>
+      Files are uploaded. Check {{ uploads }} folder.
+    </div>
+    <div>
+        {% if image_filename %}
+        <img src="/uploads/{{ image_filename }}" />
+        {% end %}
+        {% if audio_filename %}
+        <audio src="/uploads/{{ audio_filename }}" controls>
+          <p>Browser needs to support audio tag.</p>
+        </audio>
+        {% end %}
+    </div>
+
+    <form action='/new' method='post'>
+      {% raw xsrf_form_html() %}
+      <fieldset>
+        <legend>New Entry</legend>
+        <div class="form-group">
+          <label>Title</label>
+          <input class='form-control' name='title' placeholder='Title' type='text' >
+        </div>
+        <div class="form-group">
+          <label>Body</label>
+          <textarea class='form-control' name='body' placeholder='Body'></textarea>
+        </div>
+        <div class="form-group">
+          <label>Image</label>
+          <input class='form-control' id='image' name='image' placeholder='Image Filename' type='text' value='{{ image_filename }}'>
+        </div>
+        <div class="form-group">
+          <label>Audio</label>
+          <input class='form-control' id='audio' name='audio' placeholder='Audio Filename' type='text' value='{{ audio_filename }}'>
+        <br>
+        </div>
+        <div class="form-group">
+          <button type='submit' class='btn btn-primary'>Submit</button>
+        </div>
+      </fieldset>
+    </form>
+    <br />
+    <button class="btn btn-default" data-toggle="modal" data-target="#selectImageModal">
+      Select Image
+    </button>
+    <button class="btn btn-default" data-toggle="modal" data-target="#selectAudioModal">
+      Select Audio
+    </button>
+
+{% end %}

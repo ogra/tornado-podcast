@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Confirm
+{% end %}
+
+{% block header %}
+  <h1>Are you sure?</h1>
+{% end %}
+
+{% block body %}  
+  <div>
+    Are you sure you want to delete all entries?
+  </div>
+  {% if user %}
+  <form action="/deleteall" method='post'>
+    {% raw xsrf_form_html() %}
+    <fieldset>
+      <input type='hidden' name='deleteall' value='true'>
+      <button type='submit' class='btn btn-default'>Yes, delete all entries.</button>
+    </fieldset>
+  </form>
+  {% end %}
+{% end %}

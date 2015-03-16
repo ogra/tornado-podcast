@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if 'title' in entry %}
+    {{ entry['title'] }}
+  {% else %}
+    Blog Entry
+  {% end %}
+{% end %}
+
+{% block header %}
+  <h1>Podcast</h1>
+{% end %}
+
+{% block body %}  
+
+  <div class="container">
+
+  <div>
+    {% if 'title' in entry %}
+      <h2>{{ entry['title'] }}</h2>
+    {% end %}
+    
+    {% if 'body' in entry %}
+      <div class="entry_body">
+      {{ entry['body'] }}
+      </div>
+    {% end %}
+    
+    {% if 'last_update' in entry %}
+    <div class="last_update">
+      Last update at {{ convert_to_jst(entry['last_update']).strftime("%A %d. %B %Y %H:%M %Z") }}
+    </div>
+    {% end %}
+    
+    {% if 'ts' in entry %}
+    <div class="created_at">
+      Created at {{ convert_to_jst(entry['ts']).strftime("%A %d. %B %Y %H:%M %Z") }}
+    </div>
+    {% end %}
+
+    {% if 'image' in entry and entry['image'] %}
+      <div class="image">
+        <img src="/uploads/{{ entry['image'] }}">
+      </div>
+    {% end %}
+    
+    {% if 'audio' in entry and entry['audio'] %}
+      <div class="audio">
+        <audio src="/uploads/{{ entry['audio'] }}" controls></audio>
+      </div>
+    {% end %}
+    
+    <div>
+      <a href="/blog">Back to Blog Index</a>
+    </div>
+    
+    {% if user %}
+    <span>
+      <a href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Edit</a>
+    </span>
+    
+    <form action="/delete" method='post'>
+      {% raw xsrf_form_html() %}
+      <input type='hidden' name='entry_id' value='{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}'>
+      <button type='submit' class="btn btn-default">Delete</button>
+    </form>
+    {% end %}
+  </div>
+
+  </div>
+
+{% end %}

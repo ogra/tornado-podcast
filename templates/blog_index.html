@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Podcast
+{% end %}
+
+{% block header %}
+  <h1>Podcast</h1>
+{% end %}
+
+{% block body %}  
+  {% for entry in entries %}
+  <div>
+    {% if 'title' in entry %}
+      <a href="/entry/{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}"><h2>{{ entry['title'] }}</h2></a>
+    {% end %}
+    
+    {% if 'body' in entry %}
+    <div class="entry_body">
+      {{ entry['body'] }}
+    </div>
+    {% end %}
+    
+    {% if 'last_update' in entry %}
+    <div class="last_update">
+      Last update at {{ convert_to_jst(entry['last_update']).strftime("%A %d. %B %Y %H:%M %Z") }}
+    </div>
+    {% end %}
+    
+    {% if 'ts' in entry %}
+    <div class="created_at">
+      Created at {{ convert_to_jst(entry['ts']).strftime("%A %d. %B %Y %H:%M %Z") }}
+    </div>
+    {% end %}
+    
+    <span>
+    <a href="/entry/{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Permalink</a>
+    </span>
+    
+    {% if user %}
+    <span>
+    <a href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Edit</a>
+    </span>
+    
+    <form action="/delete" method='post'>
+      {% raw xsrf_form_html() %}
+      <input type='hidden' name='entry_id' value='{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}'>
+      <button type='submit' class="btn btn-default">Delete</button>
+    </form>
+    {% end %}
+  </div>
+  <hr />
+  {% end %}
+  
+  {% if user %}
+      <button class="btn btn-default" onClick="location.href='/deleteall'">Delete All Entries</button>
+  {% end %}
+{% end %}
+  
+{% block footer %}
+  <div>
+  <a href="/new">Create New Entry</a>
+  </div>
+  <div>
+  <a href="/uploadform">Upload Files</a>
+  </div>
+{% end %}

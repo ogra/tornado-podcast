@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Log In</title>
+  </head>
+  <body>
+    <p>Username or Password is not valid.</p>
+    <form method='post'>
+      {% raw xsrf_form_html() %}
+      <fieldset>
+        <legend>Log In</legend>
+        <label>Username <input name='username' placeholder='Username'></label><br>
+        <label>Password <input name='password' placeholder='Password' type='password'></label><br>
+        <button type='submit'>Submit</button>
+      </fieldset>
+    </form>
+    <a href="/register">Register</a>
+  </body>
+</html>

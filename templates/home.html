@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Site Root
+{% end %}
+
+{% block header %}<h1>Site Root</h1>{% end %}
+
+{% block body %}
+<div>
+  {% raw urls %}
+</div>
+{% end %}
+
+{% block footer %}
+<div>
+  <a href="/blog">Blog Home</a>
+</div>
+{% end %}

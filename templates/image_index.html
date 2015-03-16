@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <link rel="stylesheet" href="{{ static_url("style.css") }}">
+    <title>Blog</title>
+  </head>
+  <body>
+  
+  <div id="image_index_title">
+    Images
+  </div>
+  
+  <div>
+    <ul>
+      {% for image in images %}
+        <li><img src="{{ thumbnailpath }}{{ image }}"> {{ image }}</li>
+      {% end %}
+    </ul>
+  </div>
+  </body>
+</html>

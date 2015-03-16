@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <link rel="stylesheet" href="{{ static_url("style.css") }}">
+    <title>Blog</title>
+  </head>
+  <body>
+  
+  <div id="audio_index_title">
+    Audio
+  </div>
+  
+  <div>
+    <ul>
+      {% for audio in audios %}
+        <li><audio src="{{ uploadpath }}{{ audio }}" controls></audio> {{ audio }}</li>
+      {% end %}
+    </ul>
+  </div>
+  </body>
+</html>
