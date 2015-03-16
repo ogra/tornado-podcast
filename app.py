@@ -144,9 +144,7 @@ class HomeHandler(SessionMixin, BaseHandler):
 class BlogIndexHandler(SessionMixin, BaseHandler):
     def get(self):
         entries = self.application.blog.get_index()
-        user = self.current_user
-        session = self.session
-        self.render('blog_index.html', entries=entries, user=user, session=session, convert_to_jst=convert_to_jst)
+        self.render('blog_index.html', entries=entries, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, podcast_title=__PODCAST_TITLE__)
 
 
 class NewEntryHandler(SessionMixin, BaseHandler):
@@ -243,7 +241,7 @@ class ShowEntryHandler(SessionMixin, BaseHandler):
     def get(self, entry_id):
         entry = self.application.blog.get_entry(entry_id)
         if entry:
-            self.render('entry.html', entry=entry, user=self.current_user, convert_to_jst=convert_to_jst)
+            self.render('entry.html', entry=entry, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst)
         else:
             self.render('404.html')
 

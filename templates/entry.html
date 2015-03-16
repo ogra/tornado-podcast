@@ -27,18 +27,6 @@
       </div>
     {% end %}
     
-    {% if 'last_update' in entry %}
-    <div class="last_update">
-      Last update at {{ convert_to_jst(entry['last_update']).strftime("%A %d. %B %Y %H:%M %Z") }}
-    </div>
-    {% end %}
-    
-    {% if 'ts' in entry %}
-    <div class="created_at">
-      Created at {{ convert_to_jst(entry['ts']).strftime("%A %d. %B %Y %H:%M %Z") }}
-    </div>
-    {% end %}
-
     {% if 'image' in entry and entry['image'] %}
       <div class="image">
         <img src="/uploads/{{ entry['image'] }}">
@@ -50,22 +38,39 @@
         <audio src="/uploads/{{ entry['audio'] }}" controls></audio>
       </div>
     {% end %}
-    
-    <div>
-      <a href="/blog">Back to Blog Index</a>
+
+    {% if 'last_update' in entry %}
+    <div class="last_update">
+      Last update at {{ convert_to_jst(entry['last_update']).strftime("%Y-%m-%d %H:%M %Z") }}
     </div>
+    {% end %}
     
-    {% if user %}
-    <span>
-      <a href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Edit</a>
-    </span>
+    {% if 'ts' in entry %}
+    <div class="created_at">
+      Created at {{ convert_to_jst(entry['ts']).strftime("%Y-%m-%d %H:%M %Z") }}
+    </div>
+    {% end %}
     
+    {% if user and session %}
+    <hr />
+    <div class="row">
+    <div class="col-md-1">
+    <button class="btn btn-default" onClick='location.href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}"'>Edit</button>
+    </div>
+    <div class="col-md-1">
     <form action="/delete" method='post'>
       {% raw xsrf_form_html() %}
       <input type='hidden' name='entry_id' value='{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}'>
       <button type='submit' class="btn btn-default">Delete</button>
     </form>
+    </div>
+    </div>
+    <hr />
     {% end %}
+    <div>
+      <a href="/blog">Back to Blog Index</a>
+    </div>
+
   </div>
 
   </div>

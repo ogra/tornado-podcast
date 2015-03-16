@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_modal.html" %}
 
 {% block title %}
   Upload Complete
@@ -9,83 +9,6 @@
 {% end %}
 
 {% block body %}  
-
-<script src={{ static_url("select.js") }}></script>
-
-<!-- Image Modal -->
-<div class="modal fade" id="selectImageModal" tabindex="-1" role="dialog" 
-   aria-labelledby="selectImageModalLabel" aria-hidden="true">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" 
-               data-dismiss="modal" aria-hidden="true">
-                  &times;
-            </button>
-            <h4 class="modal-title" id="selectImageModalLabel">
-               Select Image
-            </h4>
-         </div>
-        <form>
-         <div class="modal-body">
-          {% for image in images %}
-            <input type="radio" name="image" value="{{ image }}" onClick="selectImage(this.value);">
-            {{ image }}
-            <img src="{{ thumbnailpath }}{{ image }}" />
-            <br />
-          {% end %}
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" onClick="setImage();">
-              Submit changes
-            </button>
-         </div>
-        </form>
-      </div><!-- /.modal-content -->
-    </div>
-</div><!-- /.modal -->
-
-<!-- Audio Modal -->
-<div class="modal fade" id="selectAudioModal" tabindex="-1" role="dialog" 
-   aria-labelledby="selectAudioModalLabel" aria-hidden="true">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close" 
-               data-dismiss="modal" aria-hidden="true">
-                  &times;
-            </button>
-            <h4 class="modal-title" id="selectAudioModalLabel">
-               Select Audio
-            </h4>
-         </div>
-        <form>
-         <div class="modal-body">
-          {% for audio in audios %}
-            <input type="radio" name="audio" value="{{ audio }}" onClick="selectAudio(this.value);">
-            {{ audio }}
-            <audio src="{{ uploadpath}}{{ audio }}" controls></audio>
-            <br />
-          {% end %}
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" onClick="setAudio();">
-              Submit changes
-            </button>
-         </div>
-        </form>
-      </div><!-- /.modal-content -->
-    </div>
-</div><!-- /.modal -->
-
-
-
     <div>
       Files are uploaded. Check {{ uploads }} folder.
     </div>
@@ -133,5 +56,9 @@
     <button class="btn btn-default" data-toggle="modal" data-target="#selectAudioModal">
       Select Audio
     </button>
+{% end %}
 
+{% block footer %}
+<hr />
+  <a href="/blog">Back to Blog Index</a>
 {% end %}
