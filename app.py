@@ -39,6 +39,14 @@ def convert_to_jst(datetime_obj):
     return datetime_obj.astimezone(jst)
 
 
+def file_exists(file_name):
+    path_to_file = __UPLOADS__ + file_name
+    if os.path.exists(path_to_file):
+        return True
+    else:
+        return False
+
+
 class Application(tornado.web.Application):
     def __init__(self, handlers, **settings):
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -156,7 +164,7 @@ class NewEntryHandler(SessionMixin, BaseHandler):
         else:
             images = self.application.imageutil.get_index()
             audios = self.application.audioutil.get_index()
-            self.render('new_entry.html', images=images, audios=audios, uploadpath=__UPLOADS__, thumbnailpath=__THUMBNAILS__)
+            self.render('new_entry.html', user=self.current_user, session=self.session, images=images, audios=audios, uploadpath=__UPLOADS__, thumbnailpath=__THUMBNAILS__)
 
     @tornado.web.authenticated
     def post(self):
@@ -185,7 +193,7 @@ class DeleteEntryHandler(SessionMixin, BaseHandler):
 class DeleteAllEntriesHandler(SessionMixin, BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render('deleteall.html', user=self.current_user)
+        self.render('deleteall.html', user=self.current_user, session=self.session)
 
     @tornado.web.authenticated
     def post(self):
@@ -242,7 +250,7 @@ class ShowEntryHandler(SessionMixin, BaseHandler):
     def get(self, entry_id):
         entry = self.application.blog.get_entry(entry_id)
         if entry:
-            self.render('entry.html', entry=entry, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, markdown=markdown.Markdown())
+            self.render('entry.html', entry=entry, user=self.current_user, session=self.session, convert_to_jst=convert_to_jst, markdown=markdown.Markdown(), file_exists=file_exists)
         else:
             self.render('404.html')
 
@@ -365,6 +373,10 @@ class RssHandler(SessionMixin, BaseHandler):
         self.write(fg.rss_str(pretty=True))
 
 
+class NotFoundHandler(SessionMixin, BaseHandler):
+    def get(self, invalid_url_part):
+        self.render('404.html')
+
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -380,7 +392,7 @@ if __name__ == "__main__":
         (r"/logout", UserLogoutHandler),
         (r"/login", UserLoginHandler),
         (r"/register", UserRegisterHandler),
-        (r"/podcast", PodcastIndexHandler),
+        (r"/podcast/?", PodcastIndexHandler),
         (r"/new", NewEntryHandler),
         (r"/delete", DeleteEntryHandler),
         (r"/deleteall", DeleteAllEntriesHandler),
@@ -390,12 +402,11 @@ if __name__ == "__main__":
         (r"/upload", UploadHandler),
         (r"/uploads/(.*)", tornado.web.StaticFileHandler, {"path": "uploads"}),
         (r"/thumbnails/(.*)", tornado.web.StaticFileHandler, {"path": "thumbnails"}),
-        (r"/images", ImageIndexHandler),
-        (r"/audios", AudioIndexHandler),
-        (r"/rss", RssHandler)
+        (r"/images/?", ImageIndexHandler),
+        (r"/audios/?", AudioIndexHandler),
+        (r"/rss/?", RssHandler),
+        (r"/(.*)", NotFoundHandler)
     ], **settings)
     application.sessions.clear_all_sessions()
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
-
-

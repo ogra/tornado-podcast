@@ -9,6 +9,7 @@
 {% end %}
 
 {% block body %}
+  {% if user and session %}
   <form method='post'>
     {% raw xsrf_form_html() %}
     <fieldset>
@@ -39,9 +40,13 @@
   <button class="btn btn-default" data-toggle="modal" data-target="#selectAudioModal">
     Select Audio
   </button>
+  <hr />
+  <button class="btn btn-default" onClick="location.href='/uploadform'">Upload Files</button>
+  {% end %}
 {% end %}
 
 {% block footer %}
+    <hr />
     <div>
       <a href="/podcast">Podcast Home</a>
     </div>

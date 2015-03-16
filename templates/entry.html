@@ -27,13 +27,13 @@
       </div>
     {% end %}
     
-    {% if 'image' in entry and entry['image'] %}
+    {% if 'image' in entry and file_exists(entry['image']) %}
       <div class="image">
         <img src="/uploads/{{ entry['image'] }}">
       </div>
     {% end %}
     
-    {% if 'audio' in entry and entry['audio'] %}
+    {% if 'audio' in entry and file_exists(entry['audio']) %}
       <div class="audio">
         <audio src="/uploads/{{ entry['audio'] }}" controls></audio>
       </div>

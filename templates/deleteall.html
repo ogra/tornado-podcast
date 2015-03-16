@@ -12,7 +12,7 @@
   <div>
     Are you sure you want to delete all entries?
   </div>
-  {% if user %}
+  {% if user and session %}
   <form action="/deleteall" method='post'>
     {% raw xsrf_form_html() %}
     <fieldset>
@@ -21,4 +21,10 @@
     </fieldset>
   </form>
   {% end %}
+{% end %}
+{% block footer %}
+  <hr />
+  <div>
+    <a href="/podcast">Back to Podcast Index</a>
+  </div>
 {% end %}
