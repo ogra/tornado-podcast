@@ -19,3 +19,8 @@ This is a podcast server based on Tornado (Python web framework) and MongoDB.
 1. Start MongoDB
 2. Start podcast server by `python app.py`.
 3. Open http://localhost:8888/podcast in a browser.
+
+## Credit
+Session and authentication handling by bbqsrc:
+
+[Session and authentication handling using MongoDB for Tornado](https://github.com/bbqsrc/tornado-mongo-session)
