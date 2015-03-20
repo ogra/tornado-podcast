@@ -40,6 +40,8 @@ def convert_to_jst(datetime_obj):
 
 
 def file_exists(file_name):
+    if file_name is None:
+        return False
     path_to_file = __UPLOADS__ + file_name
     if os.path.exists(path_to_file):
         return True
@@ -175,7 +177,7 @@ class NewEntryHandler(SessionMixin, BaseHandler):
             body = self.get_argument("body", None)
             image_filename = self.get_argument("image", None)
             audio_filename = self.get_argument("audio", None)
-            self.application.blog.create_entry(title, body, image_filename, audio_filename)
+            self.application.blog.create_entry(title, body, image_filename, audio_filename, self.current_user)
             self.redirect('/podcast')
 
 
@@ -242,7 +244,7 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
             audio_filename = None
             if not tmp_audio_filename in ['None', '']:
                 audio_filename = tmp_audio_filename
-            self.application.blog.update_entry(entry_id, title, body, image_filename, audio_filename)
+            self.application.blog.update_entry(entry_id, title, body, image_filename, audio_filename, self.current_user)
             self.redirect('/entry/' + entry_id)
 
 

@@ -39,6 +39,12 @@
       </div>
     {% end %}
 
+    {% if 'user' in entry %}
+      <div class="user">
+        Author: {{ user }}
+      </div>
+    {% end %}
+    
     {% if 'last_update' in entry %}
     <div class="last_update">
       Last update at {{ convert_to_jst(entry['last_update']).strftime("%Y-%m-%d %H:%M %Z") }}
