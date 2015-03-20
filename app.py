@@ -163,6 +163,17 @@ class PodcastIndexHandler(SessionMixin, BaseHandler):
                     podcast_title=__PODCAST_TITLE__)
 
 
+class UserIndexHandler(SessionMixin, BaseHandler):
+    def get(self, user):
+        entries = self.application.blog.get_index(user=user)
+        self.render('podcast_index.html',
+                    entries=entries,
+                    user=self.current_user,
+                    session=self.session,
+                    convert_to_jst=convert_to_jst,
+                    podcast_title=__PODCAST_TITLE__)
+
+
 class NewEntryHandler(SessionMixin, BaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -446,6 +457,7 @@ if __name__ == "__main__":
         (r"/login", UserLoginHandler),
         (r"/register", UserRegisterHandler),
         (r"/podcast/?", PodcastIndexHandler),
+        (r"/podcast/([a-zA-Z0-9]+)/?", UserIndexHandler),
         (r"/new", NewEntryHandler),
         (r"/delete", DeleteEntryHandler),
         (r"/deleteall", DeleteAllEntriesHandler),

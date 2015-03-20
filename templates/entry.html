@@ -41,7 +41,7 @@
 
     {% if 'user' in entry %}
       <div class="user">
-        Author: {{ user }}
+        Author: <a href="/podcast/{{ entry['user'] }}">{{ entry['user'] }}</a>
       </div>
     {% end %}
     

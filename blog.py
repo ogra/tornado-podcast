@@ -8,8 +8,11 @@ class MongoBlog:
         self._conn = pymongo.MongoClient(**kwargs)
         self._coll = self._conn[database][collection]
 
-    def get_index(self):
-        entries = self._coll.find().sort('ts', pymongo.DESCENDING)
+    def get_index(self, user=None):
+        if user is None:
+            entries = self._coll.find().sort('ts', pymongo.DESCENDING)
+        else:
+            entries = self._coll.find({"user": user}).sort('ts', pymongo.DESCENDING)
         return entries
 
     def create_entry(self, title, body, image_filename, audio_filename, user):

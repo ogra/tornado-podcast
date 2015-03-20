@@ -5,7 +5,7 @@
 {% end %}
 
 {% block header %}
-  <h1>{{ podcast_title }}</h1>
+  <h1><a href="/podcast">{{ podcast_title }}</a></h1>
 {% end %}
 
 {% block body %}
@@ -44,7 +44,7 @@
         
         {% if 'user' in entry %}
           <div class="user">
-            Author: {{ user }}
+            Author: <a href="/podcast/{{ entry['user'] }}">{{ entry['user'] }}</a>
           </div>
         {% end %}
         
