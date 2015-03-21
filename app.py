@@ -297,10 +297,12 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
 class ShowEntryHandler(SessionMixin, BaseHandler):
     def get(self, entry_id):
         entry = self.application.blog.get_entry(entry_id)
-        username = self.current_user
-        upload_dir = __UPLOADS__ + \
-                self.application.auth.get_subdir_name(username) + '/'
-        if entry:
+        if not entry:
+            self.render('404.html')
+        else:
+            username = entry['username']
+            upload_dir = __UPLOADS__ + \
+                    self.application.auth.get_subdir_name(username) + '/'
             self.render('entry.html',
                         entry=entry,
                         user=username,
@@ -309,8 +311,6 @@ class ShowEntryHandler(SessionMixin, BaseHandler):
                         markdown=markdown.Markdown(),
                         file_exists=file_exists,
                         upload_dir=upload_dir)
-        else:
-            self.render('404.html')
 
 
 class UploadFormHandler(SessionMixin, BaseHandler):
