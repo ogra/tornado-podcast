@@ -145,7 +145,6 @@ class UserLogoutHandler(SessionMixin, BaseHandler):
 
 
 class HomeHandler(SessionMixin, BaseHandler):
-    # @tornado.web.authenticated
     def get(self):
         if self.session is None:
             urls = '<a href="/register">Register</a> | <a href="/login">Log In</a>'
@@ -427,25 +426,30 @@ class UploadHandler(SessionMixin, BaseHandler):
 
 
 class ImageIndexHandler(SessionMixin, BaseHandler):
+    @tornado.web.authenticated
     def get(self):
-        images = self.application.imageutil.get_index()
         user = self.current_user
+        subdir_name = self.application.auth.get_subdir_name(user)
+        images = self.application.imageutil.get_index(subdir_name)
+        thumbnail_subdir = __THUMBNAILS__ + subdir_name + '/'
         self.render('image_index.html',
                     images=images,
                     user=user,
                     session=self.session,
-                    thumbnailpath=__THUMBNAILS__)
+                    thumbnailpath=thumbnail_subdir)
 
 
 class AudioIndexHandler(SessionMixin, BaseHandler):
     def get(self):
-        audios = self.application.audioutil.get_index()
         user = self.current_user
+        subdir_name = self.application.auth.get_subdir_name(user)
+        audios = self.application.audioutil.get_index(subdir_name)
+        upload_subdir = __UPLOADS__ + subdir_name + '/'
         self.render('audio_index.html',
                     audios=audios,
                     user=user,
                     session=self.session,
-                    uploadpath=__UPLOADS__)
+                    uploadpath=upload_subdir)
 
 
 class RssHandler(SessionMixin, BaseHandler):
