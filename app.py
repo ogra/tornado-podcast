@@ -471,6 +471,7 @@ class RssHandler(SessionMixin, BaseHandler):
             fe.pubdate(convert_to_jst(entry['ts']))
             fe.link(href=__SITE_ROOT__ + 'entry/' + entry['entry_id'])
             fe.guid(__SITE_ROOT__ + 'entry/' + entry['entry_id'])
+            fe.podcast.itunes_author(entry['username'])
             if 'audio' in entry:
                 if not entry['audio'] is None:
                     username = entry['username']
