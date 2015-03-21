@@ -305,7 +305,7 @@ class ShowEntryHandler(SessionMixin, BaseHandler):
                     self.application.auth.get_subdir_name(username) + '/'
             self.render('entry.html',
                         entry=entry,
-                        user=username,
+                        user=self.current_user,
                         session=self.session,
                         convert_to_jst=convert_to_jst,
                         markdown=markdown.Markdown(),
