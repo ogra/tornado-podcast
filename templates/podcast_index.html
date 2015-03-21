@@ -71,7 +71,7 @@
         <a href="/entry/{% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}">Permalink</a>
         </div>
         
-        {% if user and session %}
+        {% if user and session and user == entry['username'] %}
         <div class="row">
         <div class="col-md-1">
         <button class="btn btn-default" onClick='location.href="/update?entry_id={% if 'entry_id' in entry %}{{ entry['entry_id'] }}{% end %}"'>Edit</button>

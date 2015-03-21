@@ -220,8 +220,12 @@ class DeleteEntryHandler(SessionMixin, BaseHandler):
             self.redirect('/login?next=%2Fdelete')
         else:
             entry_id = self.get_argument("entry_id", None)
-            self.application.blog.delete_entry(entry_id)
-            self.redirect('/podcast')
+            entry = self.application.blog.get_entry(entry_id)
+            if entry and entry['username'] == self.current_user:
+                self.application.blog.delete_entry(entry_id)
+                self.redirect('/podcast')
+            else:
+                self.render('403.html')
 
 
 class DeleteAllEntriesHandler(SessionMixin, BaseHandler):
@@ -248,7 +252,7 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
         else:
             entry_id = self.get_argument("entry_id", None)
             entry = self.application.blog.get_entry(entry_id)
-            if entry:
+            if entry and entry['username'] == self.current_user:
                 subdir_name = self.application.auth.get_subdir_name(self.current_user)
                 images = self.application.imageutil.get_index(subdir_name)
                 audios = self.application.audioutil.get_index(subdir_name)
@@ -259,7 +263,7 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
                             uploadpath=__UPLOADS__ + subdir_name + '/',
                             thumbnailpath=__THUMBNAILS__ + subdir_name + '/')
             else:
-                self.render('404.html')
+                self.render('403.html')
 
     @tornado.web.authenticated
     def post(self):

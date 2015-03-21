@@ -57,7 +57,7 @@
     </div>
     {% end %}
     
-    {% if user and session %}
+    {% if user and session and user == entry['username'] %}
     <hr />
     <div class="row">
     <div class="col-md-1">
