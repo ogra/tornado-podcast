@@ -1,22 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <link rel="stylesheet" href="{{ static_url("style.css") }}">
-    <title>Blog</title>
-  </head>
-  <body>
-  
-  <div id="audio_index_title">
-    Audio
-  </div>
-  
+{% extends "base.html" %}
+
+{% block header %}
+  <h1>Audio</h1>
+{% end %}
+
+{% block body %}  
+  <form action="/deleteaudios" method="post">
+    {% raw xsrf_form_html() %}
+    {% for audio in audios %}
+      <input type="checkbox" name="audio" value="{{ audio }}" >
+      <audio src="{{ uploadpath }}{{ audio }}" controls></audio> {{ audio }}
+      <br />
+    {% end %}
+    <br />
+    <button type="submit" class="btn btn-primary">
+      Delete selected images
+    </button>
+  </form>
+
+  <hr />
   <div>
-    <ul>
-      {% for audio in audios %}
-        <li><audio src="{{ uploadpath }}{{ audio }}" controls></audio> {{ audio }}</li>
-      {% end %}
-    </ul>
+    <a href="/podcast">Back to Podcast Index</a>
   </div>
-  </body>
-</html>
+{% end %}

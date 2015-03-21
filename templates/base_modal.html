@@ -37,7 +37,7 @@
         <form>
          <div class="modal-body">
           {% for image in images %}
-            <input type="radio" name="image" value="{{ image }}" onClick="selectImage(this.value);">
+            <input type="radio" name="image" value="{{ image }}" onclick="selectImage(this.value);">
             {{ image }}
             <img src="{{ thumbnailpath }}{{ image }}" />
             <br />
@@ -47,7 +47,7 @@
             <button type="button" class="btn btn-default" data-dismiss="modal">
               Close
             </button>
-            <button type="button" class="btn btn-primary" onClick="setImage();">
+            <button type="button" class="btn btn-primary" onclick="setImage();">
               Submit changes
             </button>
          </div>

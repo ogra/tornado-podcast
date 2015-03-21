@@ -428,15 +428,18 @@ class UploadHandler(SessionMixin, BaseHandler):
 class ImageIndexHandler(SessionMixin, BaseHandler):
     @tornado.web.authenticated
     def get(self):
-        user = self.current_user
-        subdir_name = self.application.auth.get_subdir_name(user)
-        images = self.application.imageutil.get_index(subdir_name)
-        thumbnail_subdir = __THUMBNAILS__ + subdir_name + '/'
-        self.render('image_index.html',
-                    images=images,
-                    user=user,
-                    session=self.session,
-                    thumbnailpath=thumbnail_subdir)
+        if self.session is None:
+            self.redirect('/')
+        else:
+            user = self.current_user
+            subdir_name = self.application.auth.get_subdir_name(user)
+            images = self.application.imageutil.get_index(subdir_name)
+            thumbnail_subdir = __THUMBNAILS__ + subdir_name + '/'
+            self.render('image_index.html',
+                        images=images,
+                        user=user,
+                        session=self.session,
+                        thumbnailpath=thumbnail_subdir)
 
 
 class AudioIndexHandler(SessionMixin, BaseHandler):
@@ -450,6 +453,44 @@ class AudioIndexHandler(SessionMixin, BaseHandler):
                     user=user,
                     session=self.session,
                     uploadpath=upload_subdir)
+
+
+class DeleteImagesHandler(SessionMixin, BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        if self.session is None:
+            self.redirect('/')
+        else:
+            user = self.current_user
+            subdir_name = self.application.auth.get_subdir_name(user)
+            list_images = self.request.arguments['image']
+            for image in list_images:
+                try:
+                    os.remove(__UPLOADS__ + subdir_name + '/' + image)
+                except:
+                    pass
+                try:
+                    os.remove(__THUMBNAILS__ + subdir_name + '/' + image)
+                except:
+                    pass
+            self.redirect('/images')
+
+
+class DeleteAudiosHandler(SessionMixin, BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        if self.session is None:
+            self.redirect('/')
+        else:
+            user = self.current_user
+            subdir_name = self.application.auth.get_subdir_name(user)
+            list_audios = self.request.arguments['audio']
+            for audio in list_audios:
+                try:
+                    os.remove(__UPLOADS__ + subdir_name + '/' + audio)
+                except:
+                    pass
+            self.redirect('/audios')
 
 
 class RssHandler(SessionMixin, BaseHandler):
@@ -518,6 +559,8 @@ if __name__ == "__main__":
         (r"/thumbnails/(.*)", tornado.web.StaticFileHandler, {"path": "thumbnails"}),
         (r"/images/?", ImageIndexHandler),
         (r"/audios/?", AudioIndexHandler),
+        (r"/deleteimages", DeleteImagesHandler),
+        (r"/deleteaudios", DeleteAudiosHandler),
         (r"/rss/?", RssHandler),
         (r"/(.*)", NotFoundHandler)
     ], **settings)
