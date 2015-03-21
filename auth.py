@@ -1,5 +1,6 @@
 import pymongo
 import uuid
+import re
 
 from passlib.hash import pbkdf2_sha512
 
@@ -34,9 +35,18 @@ class MongoAuthentication(Authentication):
     def log_out(self, username):
         return
 
+    def validate_username(self, username):
+        if re.match("^[a-zA-Z0-9\-_]+$", username):
+            return True
+        else:
+            return False
+
     def register(self, username, password, acls=[]):
         if username is None or password is None or username == "" or\
                 password == "":
+            return False
+
+        if not self.validate_username(username):
             return False
 
         record = self._coll.find_one({"username": username})
