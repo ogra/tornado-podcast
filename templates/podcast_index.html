@@ -6,7 +6,9 @@
 
 {% block header %}
   <h1>{{ podcast_title }}</h1>
-  <h4><a href="/podcast">Back to Everyone's podcast</a></h4>
+  {% if rss_user %}
+    <h4><a href="/podcast">Back to Everyone's podcast</a></h4>
+  {% end %}
 {% end %}
 
 {% block body %}
