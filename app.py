@@ -145,13 +145,16 @@ class UserLogoutHandler(SessionMixin, BaseHandler):
 
 
 class HomeHandler(SessionMixin, BaseHandler):
-    @tornado.web.authenticated
+    # @tornado.web.authenticated
     def get(self):
         if self.session is None:
             urls = '<a href="/register">Register</a> | <a href="/login">Log In</a>'
         else:
             urls = '<a href="/logout?logout=1">Log Out</a>'
-        self.render('home.html', urls=urls, data=dumps(self.session, indent=2))
+        self.render('home.html',
+                    urls=urls,
+                    user=self.current_user,
+                    session=self.session)
 
 
 class PodcastIndexHandler(SessionMixin, BaseHandler):
@@ -261,7 +264,9 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
                             images=images,
                             audios=audios,
                             uploadpath=__UPLOADS__ + subdir_name + '/',
-                            thumbnailpath=__THUMBNAILS__ + subdir_name + '/')
+                            thumbnailpath=__THUMBNAILS__ + subdir_name + '/',
+                            user=self.current_user,
+                            session=self.session)
             else:
                 self.render('403.html')
 
@@ -315,7 +320,9 @@ class UploadFormHandler(SessionMixin, BaseHandler):
         if self.session is None:
             self.redirect('/login?next=%2Fuploadform')
         else:
-            self.render("fileuploadform.html")
+            self.render("fileuploadform.html",
+                        user=self.current_user,
+                        session=self.session)
  
  
 class UploadHandler(SessionMixin, BaseHandler):
@@ -386,7 +393,9 @@ class UploadHandler(SessionMixin, BaseHandler):
                                     images=images,
                                     audios=audios,
                                     thumbnailpath=thumbnail_subdir,
-                                    uploadpath=upload_subdir)
+                                    uploadpath=upload_subdir,
+                                    user=self.current_user,
+                                    session=self.session)
                 else:
                     os.remove(upload_parent_dir + image_cname)
                     self.write('Invalid file type. Only gif, jpeg and png are allowed.')
@@ -407,7 +416,9 @@ class UploadHandler(SessionMixin, BaseHandler):
                                 images=images,
                                 audios=audios,
                                 thumbnailpath=thumbnail_subdir,
-                                uploadpath=upload_subdir)
+                                uploadpath=upload_subdir,
+                                user=self.current_user,
+                                session=self.session)
                 else:
                     os.remove(__UPLOADS__ + audio_cname)
                     self.write('Invalid file type. Only gif, jpeg and png are allowed.')
@@ -422,6 +433,7 @@ class ImageIndexHandler(SessionMixin, BaseHandler):
         self.render('image_index.html',
                     images=images,
                     user=user,
+                    session=self.session,
                     thumbnailpath=__THUMBNAILS__)
 
 
@@ -432,6 +444,7 @@ class AudioIndexHandler(SessionMixin, BaseHandler):
         self.render('audio_index.html',
                     audios=audios,
                     user=user,
+                    session=self.session,
                     uploadpath=__UPLOADS__)
 
 

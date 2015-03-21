@@ -94,6 +94,9 @@
   
     <div class="container">
 
+    {% if user and session %}
+      Logged in as {{ user }}
+    {% end %}
     {% block header %}{% end %}
     {% block body %}{% end %}
     {% block footer %}{% end %}
