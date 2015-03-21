@@ -133,6 +133,35 @@ class UserRegisterHandler(SessionMixin, BaseHandler):
         self.redirect('/')
 
 
+class UpdatePasswordHandler(SessionMixin, BaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        if self.session is None:
+            self.redirect('/login')
+        else:
+            user = self.current_user
+            self.render('update_password.html', user=user, session=self.session)
+
+    @tornado.web.authenticated
+    def post(self):
+        if self.session is None:
+            self.redirect('/login')
+        else:
+            username = self.get_argument('username', None)
+            old_password = self.get_argument('old_password', None)
+            new_password = self.get_argument('new_password', None)
+
+            res = self.application.auth.update_password(username, old_password, new_password)
+            if not res:
+                self.render('update_password_failed.html')
+
+            res = self.begin_session(username, new_password)
+            if not res:
+                self.render('login_failed.html')
+
+            self.redirect('/')
+
+
 class UserLogoutHandler(SessionMixin, BaseHandler):
     def get(self):
         self.post()
@@ -546,6 +575,7 @@ if __name__ == "__main__":
         (r"/logout", UserLogoutHandler),
         (r"/login", UserLoginHandler),
         (r"/register", UserRegisterHandler),
+        (r"/update_password", UpdatePasswordHandler),
         (r"/podcast/?", PodcastIndexHandler),
         (r"/podcast/([a-zA-Z0-9]+)/?", UserIndexHandler),
         (r"/new", NewEntryHandler),

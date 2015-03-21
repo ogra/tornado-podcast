@@ -81,3 +81,23 @@ class MongoAuthentication(Authentication):
             return subdir
         else:
             return record["subdir"]
+
+    def update_password(self, username, old_password, new_password):
+        if username is None or old_password is None or new_password is None or \
+                username == "" or old_password == "" or new_password == "":
+            return False
+
+        record = self._coll.find_one({"username": username})
+        if record is None:
+            return False
+
+        if not self.log_in(username, old_password):
+            return False
+
+        new_password_hash = pbkdf2_sha512.encrypt(new_password, rounds=128000)
+        self._coll.update({"username": username},
+                          {"username": username,
+                           "password": new_password_hash,
+                           "acl": record["acl"],
+                           "subdir": self.get_subdir_name(username)})
+        return True
