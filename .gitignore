@@ -1,10 +1,8 @@
-uploads/*.mp3
-uploads/*.gif
-uploads/*.jpeg
-uploads/*.jpg
-uploads/*.png
-thumbnails/*.gif
-thumbnails/*.jpeg
-thumbnails/*.jpg
-thumbnails/*.png
+uploads/
+thumbnails/
+*.gif
+*.jpeg
+*.jpg
+*.png
+*.mp3
 *.pyc

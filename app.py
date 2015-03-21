@@ -20,13 +20,15 @@ from audioutil import AudioUtil
 from feedgen.feed import FeedGenerator
 
 
+# must include '/' at the end
 __UPLOADS__ = "uploads/"
 __THUMBNAILS__ = "thumbnails/"
+
 __THUMBNAIL_MAX_PIXEL__ = 120
 
-__PODCAST_TITLE__ = "Ogura's Podcast"
+__PODCAST_TITLE__ = "Everyone's Podcast"
 __PODCAST_LINK__ = 'http://localhost:8888/podcast'
-__PODCAST_DESCRIPTION__ = "Toshiyuki Ogura's podcast"
+__PODCAST_DESCRIPTION__ = "Everyone's podcast"
 __PODCAST_ITUNES_CATEGORY__ = ('Technology', 'Podcasting')
 __PODCAST_ITUNES_AUTHOR__ = 'Toshiyuki Ogura'
 __SITE_ROOT__ = 'http://localhost:8888/'
@@ -160,18 +162,20 @@ class PodcastIndexHandler(SessionMixin, BaseHandler):
                     user=self.current_user,
                     session=self.session,
                     convert_to_jst=convert_to_jst,
-                    podcast_title=__PODCAST_TITLE__)
+                    podcast_title=__PODCAST_TITLE__,
+                    rss_user=None)
 
 
 class UserIndexHandler(SessionMixin, BaseHandler):
-    def get(self, user):
-        entries = self.application.blog.get_index(user=user)
+    def get(self, username):
+        entries = self.application.blog.get_index(username=username)
         self.render('podcast_index.html',
                     entries=entries,
                     user=self.current_user,
                     session=self.session,
                     convert_to_jst=convert_to_jst,
-                    podcast_title=__PODCAST_TITLE__)
+                    podcast_title= username + "'s podcast",
+                    rss_user=username)
 
 
 class NewEntryHandler(SessionMixin, BaseHandler):
@@ -180,15 +184,17 @@ class NewEntryHandler(SessionMixin, BaseHandler):
         if self.session is None:
             self.redirect('/login?next=%2Fnew')
         else:
-            images = self.application.imageutil.get_index()
-            audios = self.application.audioutil.get_index()
+            username = self.current_user
+            subdir_name = self.application.auth.get_subdir_name(username)
+            images = self.application.imageutil.get_index(subdir_name)
+            audios = self.application.audioutil.get_index(subdir_name)
             self.render('new_entry.html',
                         user=self.current_user,
                         session=self.session,
                         images=images,
                         audios=audios,
-                        uploadpath=__UPLOADS__,
-                        thumbnailpath=__THUMBNAILS__)
+                        uploadpath=__UPLOADS__ + subdir_name + '/',
+                        thumbnailpath=__THUMBNAILS__ + subdir_name + '/')
 
     @tornado.web.authenticated
     def post(self):
@@ -243,14 +249,15 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
             entry_id = self.get_argument("entry_id", None)
             entry = self.application.blog.get_entry(entry_id)
             if entry:
-                images = self.application.imageutil.get_index()
-                audios = self.application.audioutil.get_index()
+                subdir_name = self.application.auth.get_subdir_name(self.current_user)
+                images = self.application.imageutil.get_index(subdir_name)
+                audios = self.application.audioutil.get_index(subdir_name)
                 self.render('update_entry.html',
                             entry=entry,
                             images=images,
                             audios=audios,
-                            uploadpath=__UPLOADS__,
-                            thumbnailpath=__THUMBNAILS__)
+                            uploadpath=__UPLOADS__ + subdir_name + '/',
+                            thumbnailpath=__THUMBNAILS__ + subdir_name + '/')
             else:
                 self.render('404.html')
 
@@ -282,14 +289,18 @@ class UpdateEntryHandler(SessionMixin, BaseHandler):
 class ShowEntryHandler(SessionMixin, BaseHandler):
     def get(self, entry_id):
         entry = self.application.blog.get_entry(entry_id)
+        username = self.current_user
+        upload_dir = __UPLOADS__ + \
+                self.application.auth.get_subdir_name(username) + '/'
         if entry:
             self.render('entry.html',
                         entry=entry,
-                        user=self.current_user,
+                        user=username,
                         session=self.session,
                         convert_to_jst=convert_to_jst,
                         markdown=markdown.Markdown(),
-                        file_exists=file_exists)
+                        file_exists=file_exists,
+                        upload_dir=upload_dir)
         else:
             self.render('404.html')
 
@@ -329,6 +340,16 @@ class UploadHandler(SessionMixin, BaseHandler):
             new_width = int(width * float(new_height) / float(height))
         return (new_width, new_height)
 
+    def get_subdir(self, uploads_dir, thumbnail_dir):
+        subdir_name = self.application.auth.get_subdir_name(self.current_user)
+        upload_subdir = uploads_dir + subdir_name + '/'
+        thumbnail_subdir = thumbnail_dir + subdir_name + '/'
+        if not os.path.exists(upload_subdir):
+            os.mkdir(upload_subdir)
+        if not os.path.exists(thumbnail_subdir):
+            os.mkdir(thumbnail_subdir)
+        return subdir_name
+
     @tornado.web.authenticated
     def post(self):
         if self.session is None:
@@ -336,50 +357,53 @@ class UploadHandler(SessionMixin, BaseHandler):
         else:
             image_cname = None
             audio_cname = None
+            subdir_name = self.get_subdir(__UPLOADS__, __THUMBNAILS__)
+            upload_subdir = __UPLOADS__ + subdir_name + '/'
+            thumbnail_subdir = __THUMBNAILS__ + subdir_name + '/'
             if 'filearg1' in self.request.files:
                 image_file_info = self.request.files['filearg1'][0]
                 image_file_name = image_file_info['filename']
-                image_cname = self.get_unique_filename(__UPLOADS__, image_file_name)
-                image_fh = open(__UPLOADS__ + image_cname, 'wb')
+                image_cname = self.get_unique_filename(upload_subdir, image_file_name)
+                image_fh = open(upload_subdir + image_cname, 'wb')
                 image_fh.write(image_file_info['body'])
                 image_fh.close()
-                if imghdr.what(__UPLOADS__ + image_cname) in ['gif', 'jpeg', 'png']:
-                    img = Image.open(__UPLOADS__ + image_cname, 'r')
+                if imghdr.what(upload_subdir + image_cname) in ['gif', 'jpeg', 'png']:
+                    img = Image.open(upload_subdir + image_cname, 'r')
                     img.thumbnail(self.get_thumbnail_size(img))
-                    img.save(__THUMBNAILS__ + image_cname)
+                    img.save(thumbnail_subdir + image_cname)
                     img.close()
                     if not 'filearg2' in self.request.files:
-                        images = self.application.imageutil.get_index()
-                        audios = self.application.audioutil.get_index()
+                        images = self.application.imageutil.get_index(subdir_name)
+                        audios = self.application.audioutil.get_index(subdir_name)
                         self.render('upload_complete.html',
                                     image_filename=image_cname,
                                     audio_filename=audio_cname,
-                                    uploads=__UPLOADS__,
+                                    uploads=upload_subdir,
                                     images=images,
                                     audios=audios,
-                                    thumbnailpath=__THUMBNAILS__,
-                                    uploadpath=__UPLOADS__)
+                                    thumbnailpath=thumbnail_subdir,
+                                    uploadpath=upload_subdir)
                 else:
-                    os.remove(__UPLOADS__ + image_cname)
+                    os.remove(upload_parent_dir + image_cname)
                     self.write('Invalid file type. Only gif, jpeg and png are allowed.')
             if 'filearg2' in self.request.files:
                 audio_file_info = self.request.files['filearg2'][0]
                 audio_file_name = audio_file_info['filename']
-                audio_cname = self.get_unique_filename(__UPLOADS__, audio_file_name)
-                audio_fh = open(__UPLOADS__ + audio_cname, 'wb')
+                audio_cname = self.get_unique_filename(upload_subdir, audio_file_name)
+                audio_fh = open(upload_subdir + audio_cname, 'wb')
                 audio_fh.write(audio_file_info['body'])
                 audio_fh.close()
                 if audio_file_info['content_type'] == 'audio/mp3':
-                    images = self.application.imageutil.get_index()
-                    audios = self.application.audioutil.get_index()
+                    images = self.application.imageutil.get_index(subdir_name)
+                    audios = self.application.audioutil.get_index(subdir_name)
                     self.render('upload_complete.html',
                                 image_filename=image_cname,
                                 audio_filename=audio_cname,
-                                uploads=__UPLOADS__,
+                                uploads=upload_subdir,
                                 images=images,
                                 audios=audios,
-                                thumbnailpath=__THUMBNAILS__,
-                                uploadpath=__UPLOADS__)
+                                thumbnailpath=thumbnail_subdir,
+                                uploadpath=upload_subdir)
                 else:
                     os.remove(__UPLOADS__ + audio_cname)
                     self.write('Invalid file type. Only gif, jpeg and png are allowed.')
@@ -417,7 +441,8 @@ class RssHandler(SessionMixin, BaseHandler):
         fg.podcast.itunes_category(*__PODCAST_ITUNES_CATEGORY__)
         fg.podcast.itunes_author(__PODCAST_ITUNES_AUTHOR__)
 
-        entries = self.application.blog.get_index()
+        username = self.get_argument("username", None)
+        entries = self.application.blog.get_index(username=username)
         for entry in entries:
             fe = fg.add_entry()
             fe.title(entry['title'])
@@ -427,7 +452,9 @@ class RssHandler(SessionMixin, BaseHandler):
             fe.guid(__SITE_ROOT__ + 'entry/' + entry['entry_id'])
             if 'audio' in entry:
                 if not entry['audio'] is None:
-                    path_to_audiofile = __UPLOADS__ + entry['audio']
+                    username = entry['username']
+                    subdir_name = self.application.auth.get_subdir_name(username)
+                    path_to_audiofile = __UPLOADS__ + subdir_name + '/' + entry['audio']
                     if os.path.exists(path_to_audiofile):
                         length = os.path.getsize(path_to_audiofile)
                         fe.enclosure(__SITE_ROOT__ + path_to_audiofile,

@@ -5,14 +5,19 @@
 {% end %}
 
 {% block header %}
-  <h1><a href="/podcast">{{ podcast_title }}</a></h1>
+  <h1>{{ podcast_title }}</h1>
+  <h4><a href="/podcast">Back to Everyone's podcast</a></h4>
 {% end %}
 
 {% block body %}
   <div class="row">
     <div class="col-md-2">
       <hr />
-      <a href="/rss">RSS</a>
+      {% if rss_user %}
+        <a href="/rss?username={{ rss_user }}">RSS</a>
+      {% else %}
+        <a href="/rss">RSS</a>
+      {% end %}
       {% if not (user and session) %}
         <hr />
         <a href="/login?next=%2Fpodcast">Login</a>
@@ -42,9 +47,9 @@
         </div>
         {% end %}
         
-        {% if 'user' in entry %}
+        {% if 'username' in entry %}
           <div class="user">
-            Author: <a href="/podcast/{{ entry['user'] }}">{{ entry['user'] }}</a>
+            Author: <a href="/podcast/{{ entry['username'] }}">{{ entry['username'] }}</a>
           </div>
         {% end %}
         

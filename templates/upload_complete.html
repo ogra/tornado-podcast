@@ -14,10 +14,10 @@
     </div>
     <div>
         {% if image_filename %}
-        <img src="/uploads/{{ image_filename }}" />
+        <img src="{{ uploadpath }}{{ image_filename }}" />
         {% end %}
         {% if audio_filename %}
-        <audio src="/uploads/{{ audio_filename }}" controls>
+        <audio src="{{ uploadpath }}{{ audio_filename }}" controls>
           <p>Browser needs to support audio tag.</p>
         </audio>
         {% end %}

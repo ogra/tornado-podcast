@@ -27,21 +27,21 @@
       </div>
     {% end %}
     
-    {% if 'image' in entry and file_exists(entry['image']) %}
+    {% if 'image' in entry and file_exists('../' + upload_dir + str(entry['image'])) %}
       <div class="image">
-        <img src="/uploads/{{ entry['image'] }}">
+        <img src="../{{ upload_dir }}{{ entry['image'] }}">
       </div>
     {% end %}
     
-    {% if 'audio' in entry and file_exists(entry['audio']) %}
+    {% if 'audio' in entry and file_exists('../' + upload_dir + str(entry['audio'])) %}
       <div class="audio">
-        <audio src="/uploads/{{ entry['audio'] }}" controls></audio>
+        <audio src="../{{ upload_dir }}{{ entry['audio'] }}" controls></audio>
       </div>
     {% end %}
 
     {% if 'user' in entry %}
       <div class="user">
-        Author: <a href="/podcast/{{ entry['user'] }}">{{ entry['user'] }}</a>
+        Author: <a href="/podcast/{{ entry['username'] }}">{{ entry['username'] }}</a>
       </div>
     {% end %}
     

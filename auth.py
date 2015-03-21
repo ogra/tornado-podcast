@@ -1,4 +1,5 @@
 import pymongo
+import uuid
 
 from passlib.hash import pbkdf2_sha512
 
@@ -55,3 +56,18 @@ class MongoAuthentication(Authentication):
     def has_acl(self, username, acl):
         acls = self.get_acls(username)
         return acl in acls
+
+    def get_subdir_name(self, username):
+        record = self._coll.find_one({"username": username})
+        if record is None:
+            return False
+        if not "subdir" in record or record["subdir"] is None:
+            subdir = username + '-' + uuid.uuid4().hex
+            self._coll.update({"username": username},
+                              {"username": username,
+                               "password": record["password"],
+                               "acl": record["acl"],
+                               "subdir": subdir})
+            return subdir
+        else:
+            return record["subdir"]
