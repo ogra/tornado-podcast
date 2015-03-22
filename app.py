@@ -94,6 +94,10 @@ class BaseHandler(RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("username")
 
+    def write_error(self, status_code, **kwargs):
+        if status_code == 404:
+            self.render('404.html')
+
 
 class UserLoginHandler(SessionMixin, BaseHandler):
     def get(self):
@@ -556,10 +560,6 @@ class RssHandler(SessionMixin, BaseHandler):
         self.write(fg.rss_str(pretty=True))
 
 
-class NotFoundHandler(SessionMixin, BaseHandler):
-    def get(self, invalid_url_part):
-        self.render('404.html')
-
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     settings = {
@@ -591,8 +591,7 @@ if __name__ == "__main__":
         (r"/audios/?", AudioIndexHandler),
         (r"/deleteimages", DeleteImagesHandler),
         (r"/deleteaudios", DeleteAudiosHandler),
-        (r"/rss/?", RssHandler),
-        (r"/(.*)", NotFoundHandler)
+        (r"/rss/?", RssHandler)
     ], **settings)
     application.sessions.clear_all_sessions()
     application.listen(8888)
