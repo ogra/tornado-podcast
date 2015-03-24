@@ -1,8 +1,4 @@
-uploads/
-thumbnails/
-*.gif
-*.jpeg
-*.jpg
-*.png
-*.mp3
+uploads/*
+thumbnails/*
 *.pyc
+!.gitkeep
