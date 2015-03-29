@@ -560,39 +560,41 @@ class RssHandler(SessionMixin, BaseHandler):
         self.write(fg.rss_str(pretty=True))
 
 
+tornado.options.parse_command_line()
+settings = {
+    "template_path": os.path.join(os.path.dirname(__file__), "templates"),
+    "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
+    "xsrf_cookies": True,
+    "login_url": "/login",
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
+    "debug": True
+}
+application = Application([
+    (r"/", HomeHandler),
+    (r"/logout", UserLogoutHandler),
+    (r"/login", UserLoginHandler),
+    (r"/register", UserRegisterHandler),
+    (r"/update_password", UpdatePasswordHandler),
+    (r"/podcast/?", PodcastIndexHandler),
+    (r"/podcast/([a-zA-Z0-9]+)/?", UserIndexHandler),
+    (r"/new", NewEntryHandler),
+    (r"/delete", DeleteEntryHandler),
+    (r"/deleteall", DeleteAllEntriesHandler),
+    (r"/update", UpdateEntryHandler),
+    (r"/entry/([0-9a-f]+)", ShowEntryHandler),
+    (r"/uploadform", UploadFormHandler),
+    (r"/upload", UploadHandler),
+    (r"/uploads/(.*)", tornado.web.StaticFileHandler, {"path": "uploads"}),
+    (r"/thumbnails/(.*)", tornado.web.StaticFileHandler, {"path": "thumbnails"}),
+    (r"/images/?", ImageIndexHandler),
+    (r"/audios/?", AudioIndexHandler),
+    (r"/deleteimages", DeleteImagesHandler),
+    (r"/deleteaudios", DeleteAudiosHandler),
+    (r"/rss/?", RssHandler)
+], **settings)
+
+
 if __name__ == "__main__":
-    tornado.options.parse_command_line()
-    settings = {
-        "template_path": os.path.join(os.path.dirname(__file__), "templates"),
-        "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
-        "xsrf_cookies": True,
-        "login_url": "/login",
-        "static_path": os.path.join(os.path.dirname(__file__), "static"),
-        "debug": True
-    }
-    application = Application([
-        (r"/", HomeHandler),
-        (r"/logout", UserLogoutHandler),
-        (r"/login", UserLoginHandler),
-        (r"/register", UserRegisterHandler),
-        (r"/update_password", UpdatePasswordHandler),
-        (r"/podcast/?", PodcastIndexHandler),
-        (r"/podcast/([a-zA-Z0-9]+)/?", UserIndexHandler),
-        (r"/new", NewEntryHandler),
-        (r"/delete", DeleteEntryHandler),
-        (r"/deleteall", DeleteAllEntriesHandler),
-        (r"/update", UpdateEntryHandler),
-        (r"/entry/([0-9a-f]+)", ShowEntryHandler),
-        (r"/uploadform", UploadFormHandler),
-        (r"/upload", UploadHandler),
-        (r"/uploads/(.*)", tornado.web.StaticFileHandler, {"path": "uploads"}),
-        (r"/thumbnails/(.*)", tornado.web.StaticFileHandler, {"path": "thumbnails"}),
-        (r"/images/?", ImageIndexHandler),
-        (r"/audios/?", AudioIndexHandler),
-        (r"/deleteimages", DeleteImagesHandler),
-        (r"/deleteaudios", DeleteAudiosHandler),
-        (r"/rss/?", RssHandler)
-    ], **settings)
     application.sessions.clear_all_sessions()
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
