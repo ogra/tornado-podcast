@@ -8,9 +8,9 @@ from tornado.testing import AsyncHTTPTestCase, gen_test
 from tornado.httpclient import HTTPError
  
  
-class HelloWorldTest(AsyncHTTPTestCase):
+class AppTest(AsyncHTTPTestCase):
     def setUp(self):
-        super(HelloWorldTest, self).setUp()
+        super(AppTest, self).setUp()
         print("setup")
  
     def get_app(self):
@@ -24,9 +24,9 @@ class HelloWorldTest(AsyncHTTPTestCase):
     @gen_test
     def test_404(self):
         with self.assertRaises(HTTPError) as cm:
-            yield self.http_client.fetch(self.get_url('/hogehoge'))
+            yield self.http_client.fetch(self.get_url('/nonexistent'))
         self.assertEqual(cm.exception.code, 404)
  
     def tearDown(self):
         print("teardown")
-        super(HelloWorldTest, self).tearDown()
+        super(AppTest, self).tearDown()
