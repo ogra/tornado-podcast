@@ -12,7 +12,7 @@ from tornado.httpclient import HTTPError
 class AppTest(AsyncHTTPTestCase):
     def setUp(self):
         super(AppTest, self).setUp()
-        print("setup")
+        # print("setup")
 
     def get_app(self):
         return app.application
@@ -24,10 +24,27 @@ class AppTest(AsyncHTTPTestCase):
 
     @gen_test(timeout=10)
     def test_homehandler_admin(self):
-        self.get_app().sessions = mock.MagicMock()
-        self.get_app().sessions.get_session.return_value = 'test_cookie'
+        m = mock.MagicMock()
+        m.get_session.return_value = 'test_cookie'
+        self.get_app().sessions = m
         response = yield self.http_client.fetch(self.get_url('/'))
         self.assertIn("Log Out", to_unicode(response.body))
+
+    @gen_test(timeout=10)
+    def test_podcastindexhandler(self):
+        response = yield self.http_client.fetch(self.get_url('/podcast'))
+        self.assertIn("Everyone&#39;s Podcast", to_unicode(response.body))
+
+    @gen_test(timeout=10)
+    def test_podcastindexhandler_admin(self):
+        m = mock.MagicMock()
+        m.return_value = 'admin'
+        app.BaseHandler.get_current_user = m
+        m = mock.MagicMock()
+        m.get_session.return_value = 'test_cookie'
+        self.get_app().sessions = m
+        response = yield self.http_client.fetch(self.get_url('/podcast'))
+        self.assertIn("Logged in as admin", to_unicode(response.body))
 
     @gen_test
     def test_404(self):
@@ -36,5 +53,5 @@ class AppTest(AsyncHTTPTestCase):
         self.assertEqual(cm.exception.code, 404)
 
     def tearDown(self):
-        print("teardown")
+        # print("teardown")
         super(AppTest, self).tearDown()
