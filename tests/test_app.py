@@ -37,12 +37,12 @@ class AppTest(AsyncHTTPTestCase):
 
     @gen_test(timeout=10)
     def test_podcastindexhandler_admin(self):
-        m = mock.MagicMock()
-        m.return_value = 'admin'
-        app.BaseHandler.get_current_user = m
-        m = mock.MagicMock()
-        m.get_session.return_value = 'test_cookie'
-        self.get_app().sessions = m
+        m1 = mock.MagicMock()
+        m1.return_value = 'admin'
+        app.BaseHandler.get_current_user = m1
+        m2 = mock.MagicMock()
+        m2.get_session.return_value = 'test_cookie'
+        self.get_app().sessions = m2
         response = yield self.http_client.fetch(self.get_url('/podcast'))
         self.assertIn("Logged in as admin", to_unicode(response.body))
 
