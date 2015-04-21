@@ -18,6 +18,7 @@ from blog import MongoBlog
 from imageutil import ImageUtil
 from audioutil import AudioUtil
 from feedgen.feed import FeedGenerator
+import configs
 
 
 # must include '/' at the end
@@ -120,21 +121,27 @@ class UserLoginHandler(SessionMixin, BaseHandler):
 
 class UserRegisterHandler(SessionMixin, BaseHandler):
     def get(self):
-        self.render('register.html')
+        if configs.configs['allow_register']:
+            self.render('register.html')
+        else:
+            self.render('403.html')
 
     def post(self):
-        username = self.get_argument('username', None)
-        password = self.get_argument('password', None)
+        if configs.configs['allow_register']:
+            username = self.get_argument('username', None)
+            password = self.get_argument('password', None)
 
-        res = self.application.auth.register(username, password)
-        if not res:
-            self.render('register_failed.html')
+            res = self.application.auth.register(username, password)
+            if not res:
+                self.render('register_failed.html')
 
-        res = self.begin_session(username, password)
-        if not res:
-            self.render('login_failed.html')
+            res = self.begin_session(username, password)
+            if not res:
+                self.render('login_failed.html')
 
-        self.redirect('/')
+            self.redirect('/')
+        else:
+            self.render('403.html')
 
 
 class UpdatePasswordHandler(SessionMixin, BaseHandler):

@@ -1,0 +1,2 @@
+# allow_register: True to allow user registration, False to forbid.
+allow_register: True
